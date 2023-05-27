@@ -11,6 +11,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/users.entity';
 import { OtpModule } from './otp/otp.module';
 import { OTP } from './otp/otp.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -18,6 +21,7 @@ import { OTP } from './otp/otp.entity';
     AuthModule,
     PostsModule,
     ReactionsModule,
+    OtpModule,
     ConfigModule.forRoot({
       isGlobal: true
     }),
@@ -30,9 +34,29 @@ import { OTP } from './otp/otp.entity';
       entities: [
         User, OTP
       ],
-      synchronize: true,
+      // synchronize: true,
     }),
-    OtpModule
+    MailerModule.forRoot({
+      transport: {
+        host: "stmp.gmail.com",
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.EMAILPASS,
+        }
+      },
+      defaults: {
+        from: '"Noreply" <nguyenngocthien749@gmail.com>',
+      },
+      template: {
+        dir: path.join(__dirname, '../src/templates'),
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+          debug: true,
+        },
+      }
+    })
   ],
   controllers: [AppController],
   providers: [AppService, SeverGateway],

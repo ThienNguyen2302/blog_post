@@ -1,4 +1,4 @@
-import {plainToInstance} from "class-transformer"
+import {plainToClass, plainToInstance} from "class-transformer"
 export abstract class BaseDto {
     // @Expose()
     // id: string;
@@ -13,7 +13,7 @@ export abstract class BaseDto {
     // deletedAt: Date;
 
     public static plainToClass <T> (this: new (...args: any[]) => T, obj: T): T {
-        return plainToInstance
+        return plainToClass
         (this, obj, {excludeExtraneousValues: true})
     }
 }

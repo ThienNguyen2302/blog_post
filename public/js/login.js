@@ -28,7 +28,23 @@ function showError(message) {
 }
 
 function signIn(email, password) {
-    console.log(email, password)
+    fetch(BASE_URL + "auth/login", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email,
+            password
+        })
+    })
+    .then(json => json.json())
+    .then(result => {
+        console.log(result)
+    })
+    .catch(error => {
+        console.log(error)
+    })
 }
 
 function register() {
@@ -91,12 +107,24 @@ function signUp(name, surName, email, password) {
     })
         .then(json => json.json())
         .then(result => {
+            console.log(result)
             if (result.isCreated) {
                 // show validation page
+                location.replace(BASE_URL)
             }
             else {
                 // show error
+                $("#registerPassword").val("")
+                $("#registerRepeatPassword").val("")
+                if(result.error) {
+                    showError(result.error)
+                }
             }
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+            showError(error.message)
+            $("#registerPassword").val("")
+            $("#registerRepeatPassword").val("")
+        }
+        )
 }

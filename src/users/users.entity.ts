@@ -1,8 +1,12 @@
 import { BaseEntity } from 'src/common/base.entity';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { OTP } from 'src/otp/otp.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
+
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({
     unique: true
@@ -28,4 +32,6 @@ export class User extends BaseEntity {
 
   // @Column()
   // createAt: Date
+  @OneToOne(() => OTP, otp => otp.userId)
+  otp: OTP
 }
