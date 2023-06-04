@@ -40,7 +40,18 @@ function signIn(email, password) {
     })
     .then(json => json.json())
     .then(result => {
-        console.log(result)
+        if(result.login) {
+            if(!result.validate) {
+                location.replace(BASE_URL + "validate/1")
+            }
+            else {
+                location.replace(BASE_URL)
+            }
+        }
+        else {
+            $("#password").val("")
+            showError(result.message)
+        }
     })
     .catch(error => {
         console.log(error)
@@ -110,7 +121,7 @@ function signUp(name, surName, email, password) {
             console.log(result)
             if (result.isCreated) {
                 // show validation page
-                location.replace(BASE_URL)
+                location.replace(BASE_URL + "/validate/1")
             }
             else {
                 // show error

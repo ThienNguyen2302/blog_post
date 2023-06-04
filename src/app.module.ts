@@ -14,6 +14,7 @@ import { OTP } from './otp/otp.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -24,6 +25,11 @@ import * as path from 'path';
     OtpModule,
     ConfigModule.forRoot({
       isGlobal: true
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT,
+      // signOptions: { expiresIn: '60s' },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

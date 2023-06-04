@@ -29,5 +29,39 @@ export class UsersService {
             }
         }
     }
+
+    async activate(user_id) {
+        try {
+            let  user = await this.usersRepository.save({
+                id: user_id,
+                isActive: true,
+                updatedAt: new Date()
+            });
+
+            if(!user.isActive) {
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
+    public async findUserByEmail(email: string) {
+        try {
+            let user = await this.usersRepository.findOneBy({
+                mail: email
+            })
+            if(!user) {
+                return null;
+            }
+            return user
+        } catch (error) {
+            console.log(error)
+            throw new Error("An error has been occur")
+        }
+        
+    }
     
 }

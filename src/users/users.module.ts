@@ -9,5 +9,6 @@ import { OtpModule } from 'src/otp/otp.module';
   imports: [TypeOrmModule.forFeature([User]), OtpModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule {}

@@ -11,18 +11,30 @@ function validateOTP() {
         otpValue += otpInputs[i].value;
     }
 
-    fetch(BASE_URL + "validate", {
+    let otpElement = $("#otp")[0]
+    let type = otpElement.dataset.type
+
+    fetch(BASE_URL + "users/validate/" + type, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            otp: otpValue
+            code: otpValue
         })
     })
         .then(json => json.json())
         .then(result => {
-            console.log(result)
+            if(result.validation) {
+                switch (type) {
+                    case "1":
+                        location.replace(BASE_URL)
+                        break;
+                    case "2":
+                        location.replace(BASE_URL + "login")
+                        break;
+                }
+            }
         })
         .catch(error => {
             console.log(error)

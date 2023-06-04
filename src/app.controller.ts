@@ -1,16 +1,20 @@
-import { Body, Controller, Get, Param, Render } from '@nestjs/common';
+import {Controller, Get, Param, Render, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
-import * as path from 'path'
-import { type } from 'os';
+import { Response, Request } from 'express';
+import { OtpService } from './otp/otp.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(
+    private readonly appService: AppService,
+    private readonly otpService: OtpService,
+    private readonly jwtService: JwtService,
+  ) { }
 
   @Get()
   @Render('index')
   getHello() {
-    console.log(path.join(__dirname, '../src/templates'))
     return { message: this.appService.getHello() };
   }
 
@@ -18,5 +22,22 @@ export class AppController {
   @Render("login")
   getLogin() {
     return
+  }
+
+  @Get("/validate/:type")
+  @Render("validate")
+  async validateForm(
+    @Param('type') type: string,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    if (!req.cookies.validate) {
+      return res.redirect("/login")
+    }
+    else {
+      let validateInfo = await this.jwtService.verifyAsync(req.cookies.validate)
+      this.otpService.resendOTP(validateInfo.sub, validateInfo.usermail, validateInfo.type)
+      return { type: type }
+    }
   }
 }
